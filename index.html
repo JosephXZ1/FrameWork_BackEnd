@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es"> 
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica: Uso de Web Components</title> 
+    <!-- Pilar 4: Carga del componente como módulo ES --> 
+    <script type="module" src="./user-card.js"></script> 
+    <style> 
+        body
+        {
+            font-family: system-ui, sans-serif; 
+            padding: 30px; 
+            background: #f4f6f8; 
+        } 
+        .panel
+        {
+            margin-bottom: 24px; 
+            padding: 16px; 
+            background: #fff; 
+            border-radius: 8px; 
+            border: 1px solid #ddd; 
+        } 
+        button
+        {
+            padding: 8px 14px; 
+            margin-right: 8px; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            border: 1px solid #bbb; 
+            background: #fafafa; 
+        } 
+        button:hover {background: #eaeaea;} 
+        /* PRUEBA DE AISLAMIENTO CSS */ 
+        /* Esta regla cambiará los párrafos externos, pero NO afectará a <user-card> */ 
+        p
+        {
+            color: crimson; 
+            font-weight: bold; 
+        } 
+    </style> 
+</head> 
+<body> 
+    
+    <h1>Directorio de Personal</h1> 
+    <p>Este párrafo global está estilizado en rojo por el documento padre.</p> 
+    
+    <div class="panel"> 
+        <button id="btn-toggle">Alternar estado del 1er usuario</button> 
+        <button id="btn-create">Añadir usuario con JS</button> 
+    </div> 
+    
+    <div id="cards-container"> 
+        <!-- Declaración estática: Paso de datos vía atributos y contenido vía <slot> --> 
+        <user-card id="first-user" name="Carlos Mendoza" role="DevOps Engineer" status="online"> 
+        Turno: Nocturno 
+        </user-card> 
+    
+        <user-card name="Lucía Herrera" role="Frontend Architect" status="offline"> 
+        Oficina: Remoto (Uruguay) 
+        </user-card> 
+    </div> 
+    
+    <script> 
+        // Verificación del ciclo de vida (attributeChangedCallback) 
+        const btnToggle = document.getElementById('btn-toggle');
+        const firstUser = document.getElementById('first-user');
+    
+        btnToggle.addEventListener('click', () =>
+        {
+            const currentStatus = firstUser.getAttribute('status'); 
+            const nextStatus = currentStatus === 'online' ? 'offline' : 'online'; 
+            // Modificar el atributo dispara automáticamente attributeChangedCallback y render() 
+            firstUser.setAttribute('status', nextStatus); 
+        }); 
+    
+        // Verificación de instanciación dinámica en DOM (connectedCallback) 
+        const btnCreate = document.getElementById('btn-create'); 
+        const container = document.getElementById('cards-container'); 
+    
+        btnCreate.addEventListener('click', () =>
+        {
+            const newCard = document.createElement('user-card'); 
+            newCard.setAttribute('name', 'Mariana Paz'); 
+            newCard.setAttribute('role', 'QA Lead'); 
+            newCard.setAttribute('status', 'online'); 
+            newCard.textContent = 'Ingreso: Septiembre'; 
+        
+            container.appendChild(newCard); 
+        }); 
+    </script> 
+</body> 
+</html> 
